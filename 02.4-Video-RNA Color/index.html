@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+
+<head>
+  <title>Document</title>
+  <style type="text/css">
+    #sitio {
+      padding: 5rem;
+      font-size: 5rem;
+      margin-left: 15rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  <input class="jscolor {onFineChange:'update(this)'}" value="cc66ff">
+  <div id="sitio">
+    Mi sitio Web
+  </div>
+
+  <script src="jscolor.js"></script>
+  <script src="https://unpkg.com/brain.js"></script>
+
+  <script type="text/javascript">
+
+    //init RNA 
+    var rna = new brain.NeuralNetwork();
+    //entrenamiento de la red
+    const epoch = rna.train([
+      //fondo negro (entrada 0s) = texto blanco (salda 1)
+      { input: { rojo: 0, verde: 0, azul: 0 }, output: { color: 1 } },
+      //fondo blanco (entrada 1s) = texto NEGRO (salda 0)
+      { input: { rojo: 1, verde: 1, azul: 1 }, output: { color: 0 } },
+      //fondo verde texot negro
+      { input: { rojo: 0, verde: 1, azul: 0 }, output: { color: 0 } },
+      //fonodo azul tento blanco
+      { input: { rojo: 0, verde: .43, azul: 1 }, output: { color: 1 } },
+      //dfondo rojo texto blanco
+      { input: { rojo: 1, verde: 0, azul: 0 }, output: { color: 1 } },
+    ], { learningRate: 0.7, errorThresh: .004 });
+
+    console.log(epoch);
+    function update(color) {
+      var div = document.getElementById("sitio");
+      div.style.background = "rgb( " + color.channels.r + "," + color.channels.g + "," + color.channels.b + ")";
+
+      //eleccion del color del usario
+      var entrada = {
+        rojo: color.channels.r / 255,
+        verde: color.channels.g / 255,
+        azul: color.channels.b / 255,
+      }
+      //ejecucion de la rna
+      var res = rna.run(entrada);
+
+      if (res.color > .5) {
+        div.style.color = "white";
+      } else {
+        div.style.color = "black";
+      }
+    }
+  </script>
+
+
+</body>
+
+</html>
